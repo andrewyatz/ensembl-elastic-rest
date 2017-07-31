@@ -5,6 +5,7 @@ import com.chanaka.track.model.LocationJPA;
 import com.chanaka.track.model.ReleaseJPA;
 import com.chanaka.track.model.Track;
 import com.chanaka.track.model.TrackJPA;
+import com.chanaka.track.model.TrackTypeJPA;
 import com.chanaka.track.service.TrackJPAService;
 import com.chanaka.track.service.TrackService;
 import org.elasticsearch.client.Client;
@@ -38,42 +39,39 @@ public class Application implements CommandLineRunner {
 
         printElasticSearchInfo();
 
-        List<TrackJPA> tracks = trackJPAService.findAlLTracks();
+        List<TrackJPA> tracks = trackJPAService.findAllTracks();
 
-        for (TrackJPA track : tracks) {
+        for (TrackJPA t : tracks) {
+            Track esTrack = new Track();
+            esTrack.setShort_name(t.getShort_name());
+            esTrack.setLong_name(t.getLong_name());
+            esTrack.setDescription(t.getDescription());
+            esTrack.setTrack_type(t.getTrackType().getName());
 
-            Track saveTrackData = new Track();
-            saveTrackData.setShort_name(track.getShort_name());
-            saveTrackData.setLong_name(track.getLong_name());
-            saveTrackData.setDescription(track.getDescription());
-            saveTrackData.setTrack_type(track.getTrack_type_id().toString());
+            GenomeJPA g = t.getGenome();
+            esTrack.setGenome_species(g.getSpecies().getName());
+            esTrack.setGenome_assembly(g.getAssembly());
+            esTrack.setGenome_strain(g.isStrain());
 
-            //set genome data
-            GenomeJPA genomes = trackJPAService.findGenomesFindOne(track.getGenome_id());
-            saveTrackData.setGenome_species(genomes.getGenome_species());
-            saveTrackData.setGenome_assembly(genomes.getGenome_assembly());
-            saveTrackData.setGenome_strain(Boolean.parseBoolean(genomes.getGenome_strain()));
+            LocationJPA l = t.getLocation();
+            esTrack.setLocation_type(l.getType());
+            esTrack.setLocation_object_type(l.getObjectType());
+            esTrack.setLocation_species(l.getSpecies());
+            esTrack.setLocation_dbtype(l.getDbtype());
 
-            //set location data
-            LocationJPA locations = trackJPAService.findLocationsFindOne(track.getLocation_id());
-            saveTrackData.setLocation_type(locations.getLocation_type());
-            saveTrackData.setLocation_object_type(locations.getLocation_object_type());
-            saveTrackData.setLocation_species(locations.getLocation_species());
-            saveTrackData.setLocation_dbtype(locations.getLocation_dbtype());
-            //saveTrackData.setLocation_logic_names(track.get);
+            List<ReleaseJPA> releases = t.getReleases();
+            if(!releases.isEmpty()) {
+                ReleaseJPA r = releases.iterator().next();
+                esTrack.setRelease_division(r.getDivision());
+                esTrack.setRelease_version(r.getVersion());
+            }
 
-            //set release data
-            Integer releaseId = trackJPAService.getReleaseId(track.getTrack_id());
-            ReleaseJPA findReleaseFindOne = trackJPAService.findReleaseFindOne(releaseId);
-            saveTrackData.setRelease_division(findReleaseFindOne.getReleaseDivision());
-            saveTrackData.setRelease_version(findReleaseFindOne.getReleaseVersion());
-
-            trackService.save(saveTrackData);
+            trackService.save(esTrack);
         }
 
     }
 
-    //useful for debug
+    // useful for debug
     private void printElasticSearchInfo() {
 
         System.out.println("--ElasticSearch-->");

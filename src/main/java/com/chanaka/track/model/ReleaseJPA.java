@@ -15,66 +15,68 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.persistence.*;
+import java.util.List;
 
 /**
  * Created by chanaka on 7/27/17.
  */
 @Entity
-@Table(name = "release")
+@Table(name = "data_release")
 public class ReleaseJPA implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "release_id")
-    private Integer releaseId;
+    @Column(name = "data_release_id")
+    private Integer id;
     
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 8)
-    @Column(name = "release_division")
-    private String releaseDivision;
+    @Column(name = "data_release_division")
+    private String division;
     
     @Basic(optional = false)
     @NotNull
-    @Column(name = "release_version")
-    private int releaseVersion;
+    @Column(name = "data_release_version")
+    private int version;
+
+    @ManyToMany(mappedBy="releases")
+    private List<TrackJPA> tracks;
 
     public ReleaseJPA() {
     }
 
-    public ReleaseJPA(Integer releaseId) {
-        this.releaseId = releaseId;
+    public Integer getId() {
+        return id;
     }
 
-    public ReleaseJPA(Integer releaseId, String releaseDivision, int releaseVersion) {
-        this.releaseId = releaseId;
-        this.releaseDivision = releaseDivision;
-        this.releaseVersion = releaseVersion;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public Integer getReleaseId() {
-        return releaseId;
+    public String getDivision() {
+        return division;
     }
 
-    public void setReleaseId(Integer releaseId) {
-        this.releaseId = releaseId;
+    public void setDivision(String division) {
+        this.division = division;
     }
 
-    public String getReleaseDivision() {
-        return releaseDivision;
+    public int getVersion() {
+        return version;
     }
 
-    public void setReleaseDivision(String releaseDivision) {
-        this.releaseDivision = releaseDivision;
+    public void setVersion(int version) {
+        this.version = version;
     }
 
-    public int getReleaseVersion() {
-        return releaseVersion;
+    public List<TrackJPA> getTracks() {
+        return tracks;
     }
 
-    public void setReleaseVersion(int releaseVersion) {
-        this.releaseVersion = releaseVersion;
+    public List<TrackJPA> setTracks(List<TrackJPA> tracks) {
+        return this.tracks = tracks;
     }
-
 }

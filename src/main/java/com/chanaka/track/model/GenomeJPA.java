@@ -15,82 +15,64 @@ public class GenomeJPA {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "genome_id")
-    private Integer genome_id;
-
-    @Size(max = 100)
-    @Column(name = "genome_species")
-    private String genome_species;
+    private Integer id;
 
     @Size(max = 100)
     @Column(name = "genome_assembly")
-    private String genome_assembly;
+    private String assembly;
 
-    @Size(max = 10)
+    @Size(max = 1)
     @Column(name = "genome_strain")
-    private String genome_strain;
+    private Boolean strain;
 
     @Size(max = 11)
-    @Column(name = "species_id")
-    private String species_id;
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name="species_id")
+    private SpeciesJPA species;
 
     public GenomeJPA() {
     }
 
-    public GenomeJPA(String genome_species, String genome_assembly, String genome_strain, String species_id) {
-        this.genome_species = genome_species;
-        this.genome_assembly = genome_assembly;
-        this.genome_strain = genome_strain;
-        this.species_id = species_id;
+    public Integer getId() {
+        return id;
     }
 
-    public Integer getGenome_id() {
-        return genome_id;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public void setGenome_id(Integer genome_id) {
-        this.genome_id = genome_id;
+    public SpeciesJPA getSpecies() {
+        return species;
     }
 
-    public String getGenome_species() {
-        return genome_species;
+    public void setSpecies(SpeciesJPA species) {
+        this.species = species;
     }
 
-    public void setGenome_species(String genome_species) {
-        this.genome_species = genome_species;
+    public String getAssembly() {
+        return assembly;
     }
 
-    public String getGenome_assembly() {
-        return genome_assembly;
+    public void setAssembly(String assembly) {
+        this.assembly = assembly;
     }
 
-    public void setGenome_assembly(String genome_assembly) {
-        this.genome_assembly = genome_assembly;
+    public Boolean isStrain() {
+        return strain;
     }
 
-    public String getGenome_strain() {
-        return genome_strain;
-    }
-
-    public void setGenome_strain(String genome_strain) {
-        this.genome_strain = genome_strain;
-    }
-
-    public String getSpecies_id() {
-        return species_id;
-    }
-
-    public void setSpecies_id(String species_id) {
-        this.species_id = species_id;
+    public void setStrain(Boolean strain) {
+        this.strain = strain;
     }
 
     @Override
     public String toString() {
         return "GenomeJPA{" +
-                "genome_id=" + genome_id +
-                ", genome_species='" + genome_species + '\'' +
-                ", genome_assembly='" + genome_assembly + '\'' +
-                ", genome_strain='" + genome_strain + '\'' +
-                ", species_id='" + species_id + '\'' +
+                "id=" + id +
+                ", species='" + species + '\'' +
+                ", assembly='" + assembly + '\'' +
+                ", strain='" + strain + '\'' +
+                ", species_id='" + species.getId() + '\'' +
                 '}';
     }
 }

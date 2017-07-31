@@ -2,6 +2,7 @@ package com.chanaka.track.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 /**
  * Created by chanaka on 7/27/17.
@@ -14,7 +15,7 @@ public class TrackJPA {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "track_id")
-    private Integer track_id;
+    private Integer id;
 
     @Size(max = 45)
     @Column(name = "version")
@@ -33,37 +34,39 @@ public class TrackJPA {
     private String description;
 
     @Size(max = 11)
-    @Column(name = "genome_id")
-    private Integer genome_id;
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name="genome_id")
+    private GenomeJPA genome;
 
     @Size(max = 11)
-    @Column(name = "location_id")
-    private Integer location_id;
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name = "location_id")
+    private LocationJPA location;
 
     @Size(max = 11)
-    @Column(name = "track_type_id")
-    private Integer track_type_id;
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name="track_type_id")
+    private TrackTypeJPA trackType;
+
+    @Size(max = 11)
+    @ManyToMany(fetch=FetchType.EAGER)
+    @JoinTable(
+        name="track_has_release",
+        joinColumns=@JoinColumn(name="track_id", referencedColumnName="track_id"),
+        inverseJoinColumns=@JoinColumn(name="data_release_id", referencedColumnName="data_release_id")
+    )
+    private List<ReleaseJPA> releases;
+
 
     public TrackJPA() {
     }
 
-    public TrackJPA(Integer track_id, String version, String short_name, String long_name, String description, Integer genome_id, Integer location_id, Integer track_type_id) {
-        this.track_id = track_id;
-        this.version = version;
-        this.short_name = short_name;
-        this.long_name = long_name;
-        this.description = description;
-        this.genome_id = genome_id;
-        this.location_id = location_id;
-        this.track_type_id = track_type_id;
+    public Integer getId() {
+        return id;
     }
 
-    public Integer getTrack_id() {
-        return track_id;
-    }
-
-    public void setTrack_id(Integer track_id) {
-        this.track_id = track_id;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getVersion() {
@@ -98,33 +101,43 @@ public class TrackJPA {
         this.description = description;
     }
 
-    public Integer getGenome_id() {
-        return genome_id;
+    public GenomeJPA getGenome() {
+        return genome;
     }
 
-    public void setGenome_id(Integer genome_id) {
-        this.genome_id = genome_id;
+    public void setGenome(GenomeJPA genome) {
+        this.genome = genome;
     }
 
-    public Integer getLocation_id() {
-        return location_id;
+    public LocationJPA getLocation() {
+        return location;
     }
 
-    public void setLocation_id(Integer location_id) {
-        this.location_id = location_id;
+    public void setLocation(LocationJPA location) {
+        this.location = location;
     }
 
-    public Integer getTrack_type_id() {
-        return track_type_id;
+    public TrackTypeJPA getTrackType() {
+        return trackType;
     }
 
-    public void setTrack_type_id(Integer track_type_id) {
-        this.track_type_id = track_type_id;
+    public void setTrackType(TrackTypeJPA trackType) {
+        this.trackType = trackType;
     }
+
+    public List<ReleaseJPA> getReleases() {
+        return releases;
+    }
+
+    public void setReleases(List<ReleaseJPA> releases) {
+        this.releases = releases;
+    }
+
+    
 
     @Override
     public String toString() {
-        return "TrackJPA{" + "track_id=" + track_id + ", version=" + version + ", short_name=" + short_name + ", long_name=" + long_name + ", description=" + description + ", genome_id=" + genome_id + ", location_id=" + location_id + ", track_type_id=" + track_type_id + '}';
+        return "TrackJPA{" + "track_id=" + id + ", version=" + version + ", short_name=" + short_name + ", long_name=" + long_name + ", description=" + description + ", genome_id=" + genome.getId() + ", location_id=" + location.getId() + ", track_type_id=" + trackType.getId() + '}';
     }
 
    
